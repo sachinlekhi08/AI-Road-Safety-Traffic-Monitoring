@@ -1,0 +1,140 @@
+/* dashboard/static/css/style.css
+   Custom styles for the AI Road Safety dashboard */
+
+/* ---- Global ---- */
+body {
+  background: #f0f2f5;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---- Navbar ---- */
+.navbar {
+  border-bottom: 2px solid #198754;
+}
+
+/* ---- Cards ---- */
+.card {
+  border: none;
+  border-radius: 10px;
+}
+.card-header {
+  border-radius: 10px 10px 0 0 !important;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Summary / stat cards ---- */
+.stat-card {
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 4px;
+}
+.stat-card .stat-icon {
+  font-size: 2rem;
+  opacity: 0.3;
+  position: absolute;
+  right: 14px;
+  bottom: 8px;
+}
+.stat-card-vehicles {
+  background: linear-gradient(135deg, #0d6efd, #084298);
+}
+.stat-card-cars {
+  background: linear-gradient(135deg, #0dcaf0, #087990);
+}
+.stat-card-motos {
+  background: linear-gradient(135deg, #fd7e14, #a04000);
+}
+.stat-card-buses {
+  background: linear-gradient(135deg, #6f42c1, #432874);
+}
+.stat-card-trucks {
+  background: linear-gradient(135deg, #dc3545, #842029);
+}
+.stat-card-peds {
+  background: linear-gradient(135deg, #198754, #0a3622);
+}
+.stat-card-density {
+  background: linear-gradient(135deg, #6c757d, #343a40);
+}
+.stat-card-density.low {
+  background: linear-gradient(135deg, #198754, #0a3622);
+}
+.stat-card-density.medium {
+  background: linear-gradient(135deg, #fd7e14, #a04000);
+}
+.stat-card-density.high {
+  background: linear-gradient(135deg, #dc3545, #842029);
+}
+
+/* ---- Drop zone ---- */
+.drop-zone {
+  border: 2px dashed #adb5bd;
+  border-radius: 10px;
+  padding: 2rem 1rem;
+  text-align: center;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+  cursor: pointer;
+}
+.drop-zone.dragover {
+  border-color: #198754;
+  background: #e8f7ee;
+}
+
+/* ---- Built-in video list ---- */
+.builtin-item {
+  cursor: pointer;
+  border-radius: 6px !important;
+  transition: background 0.15s;
+}
+.builtin-item:hover {
+  background: #e9ecef;
+}
+.builtin-item.selected {
+  background: #d1e7dd;
+  border-color: #198754 !important;
+  color: #0a3622;
+  font-weight: 600;
+}
+
+/* ---- Status banner ---- */
+#statusBanner {
+  border-radius: 10px;
+}
+
+/* ---- Table ---- */
+.table th {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+.table td {
+  vertical-align: middle;
+}
+
+/* ---- Density badge ---- */
+.badge-density-low {
+  background-color: #198754;
+}
+.badge-density-medium {
+  background-color: #fd7e14;
+}
+.badge-density-high {
+  background-color: #dc3545;
+}
