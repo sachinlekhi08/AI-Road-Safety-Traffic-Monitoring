@@ -65,7 +65,7 @@ def _draw_overlay(
     """Draw a semi-transparent stats panel on the top-left corner."""
 
     panel_h = 180
-    panel_w = 260
+    panel_w = 330
 
     overlay = frame.copy()
 
@@ -88,46 +88,56 @@ def _draw_overlay(
 
     font = cv2.FONT_HERSHEY_SIMPLEX
 
+    # lines = [
+    #     ("AI Traffic Monitor", 0.50, (200, 200, 200)),
+    #     (
+    #         f"Frame: {frame_idx:05d}  FPS: {fps:.1f}",
+    #         0.40,
+    #         (180, 180, 180),
+    #     ),
+    #     (
+    #         f"Vehicles (frame): {vehicle_in_frame}",
+    #         0.40,
+    #         (255, 255, 255),
+    #     ),
+    #     (
+    #         f"Density: {density}",
+    #         0.45,
+    #         density_color_bgr(density),
+    #     ),
+    #     (
+    #         f"Total Vehicles:  {counts.get('total_vehicles', 0)}",
+    #         0.42,
+    #         (255, 255, 255),
+    #     ),
+    #     (
+    #         f"Cars: {counts.get('cars', 0)}  "
+    #         f"Motos: {counts.get('motorcycles', 0)}",
+    #         0.40,
+    #         (200, 230, 255),
+    #     ),
+    #     (
+    #         f"Buses: {counts.get('buses', 0)}  "
+    #         f"Trucks: {counts.get('trucks', 0)}",
+    #         0.40,
+    #         (200, 230, 255),
+    #     ),
+    #     (
+    #         f"Pedestrians: {counts.get('pedestrians', 0)}",
+    #         0.40,
+    #         (255, 220, 180),
+    #     ),
+    # ]
     lines = [
-        ("AI Traffic Monitor", 0.50, (200, 200, 200)),
-        (
-            f"Frame: {frame_idx:05d}  FPS: {fps:.1f}",
-            0.40,
-            (180, 180, 180),
-        ),
-        (
-            f"Vehicles (frame): {vehicle_in_frame}",
-            0.42,
-            (255, 255, 255),
-        ),
-        (
-            f"Density: {density}",
-            0.45,
-            density_color_bgr(density),
-        ),
-        (
-            f"Total Vehicles:  {counts.get('total_vehicles', 0)}",
-            0.42,
-            (255, 255, 255),
-        ),
-        (
-            f"Cars: {counts.get('cars', 0)}  "
-            f"Motos: {counts.get('motorcycles', 0)}",
-            0.40,
-            (200, 230, 255),
-        ),
-        (
-            f"Buses: {counts.get('buses', 0)}  "
-            f"Trucks: {counts.get('trucks', 0)}",
-            0.40,
-            (200, 230, 255),
-        ),
-        (
-            f"Pedestrians: {counts.get('pedestrians', 0)}",
-            0.40,
-            (255, 220, 180),
-        ),
-    ]
+    ("AI TRAFFIC MONITOR", 0.50, (200, 200, 200)),
+    (f"Frame: {frame_idx:05d}  FPS: {fps:.1f}", 0.40, (180, 180, 180)),
+    (f"Vehicles in frame: {vehicle_in_frame}", 0.40, (255, 255, 255)),
+    (f"Density: {density}", 0.45, density_color_bgr(density)),
+    (f"Unique vehicles: {counts.get('total_vehicles', 0)}", 0.40, (255, 255, 255)),
+    (f"Cars: {counts.get('cars', 0)}  Motorcycles: {counts.get('motorcycles', 0)}", 0.38, (200, 230, 255)),
+    (f"Buses: {counts.get('buses', 0)}  Trucks: {counts.get('trucks', 0)}", 0.38, (200, 230, 255)),
+    (f"Pedestrians: {counts.get('pedestrians', 0)}", 0.40, (255, 220, 180)),
+]
 
     y = 24
 
@@ -153,7 +163,7 @@ def _draw_detection(
     x2,
     y2,
     class_id: int,
-    track_id: int,
+    display_id,
     conf: float,
     class_name: str,
     active_rois: list[str],
@@ -171,8 +181,9 @@ def _draw_detection(
     )
 
     # Example:
-    # CAR | ID: 12
-    label = f"{class_name} | ID: {track_id}"
+    # CAR | ID:001
+    # label = f"{class_name} | ID: {track_id}"
+    label = f"{class_name} #{display_id:03d}"
 
     if active_rois:
         label += f" [{', '.join(active_rois)}]"
@@ -359,6 +370,10 @@ def process_video(
         if roi_config
         else None
     )
+    # Clean sequential IDs for display only.
+    # ByteTrack's original IDs are still kept internally.
+    display_id_map = {}
+    next_display_id = 1
 
     # -----------------------------------------------------------------------
     # Processing variables
@@ -479,6 +494,11 @@ def process_video(
                         class_id,
                         f"CLASS_{class_id}",
                     )
+                    if track_id not in display_id_map:
+                      display_id_map[track_id] = next_display_id
+                      next_display_id += 1
+
+                    display_id = display_id_map[track_id]
 
                     # -------------------------------------------------------
                     # Count unique objects
@@ -528,7 +548,7 @@ def process_video(
                         x2,
                         y2,
                         class_id,
-                        track_id,
+                        display_id,
                         conf,
                         class_name,
                         active_rois,
