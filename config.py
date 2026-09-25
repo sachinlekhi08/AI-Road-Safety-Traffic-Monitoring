@@ -32,7 +32,7 @@ DATABASE_PATH = os.path.join(BASE_DIR, "database", "traffic.db")
 # ---------------------------------------------------------------------------
 
 # Minimum confidence score to accept a detection (0–1)
-CONFIDENCE_THRESHOLD = 0.35
+CONFIDENCE_THRESHOLD = 0.25
 
 # ByteTrack configuration shipped with Ultralytics
 TRACKER_CONFIG = "bytetrack.yaml"
@@ -90,5 +90,5 @@ STATS_SAMPLE_EVERY_N_FRAMES = 10
 SECRET_KEY = "road-safety-dev-key-change-in-production"
 DEBUG = True
 HOST = "0.0.0.0"
-PORT = 5000
+PORT = 5001
 
