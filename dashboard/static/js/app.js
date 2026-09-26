@@ -242,20 +242,64 @@ async function loadResults(id) {
 // Render summary stat cards
 // ---------------------------------------------------------------------------
 function renderSummaryCards(data) {
-  const density    = (data.traffic_density || "LOW").toLowerCase();
+  const density = (data.traffic_density || "LOW").toLowerCase();
   const densityClass = `stat-card-density ${density}`;
 
+  const crossing = data.crossed_vehicles || 0;
+
   const cards = [
-    { label: "Total Vehicles",  value: data.total_vehicles  || 0, cls: "stat-card-vehicles", icon: "bi-car-front" },
-    { label: "Cars",            value: data.cars            || 0, cls: "stat-card-cars",     icon: "bi-car-front-fill" },
-    { label: "Motorcycles",     value: data.motorcycles     || 0, cls: "stat-card-motos",    icon: "bi-bicycle" },
-    { label: "Buses",           value: data.buses           || 0, cls: "stat-card-buses",    icon: "bi-bus-front" },
-    { label: "Trucks",          value: data.trucks          || 0, cls: "stat-card-trucks",   icon: "bi-truck" },
-    { label: "Pedestrians",     value: data.pedestrians     || 0, cls: "stat-card-peds",     icon: "bi-person-walking" },
-    { label: "Traffic Density", value: data.traffic_density || "N/A", cls: densityClass,     icon: "bi-speedometer" },
+    {
+      label: "Unique Detected Vehicles",
+      value: data.total_vehicles || 0,
+      cls: "stat-card-vehicles",
+      icon: "bi-car-front"
+    },
+    {
+      label: "Vehicles Crossing Line",
+      value: crossing,
+      cls: "stat-card-vehicles",
+      icon: "bi-arrow-down-circle"
+    },
+    {
+      label: "Cars",
+      value: data.cars || 0,
+      cls: "stat-card-cars",
+      icon: "bi-car-front-fill"
+    },
+    {
+      label: "Motorcycles",
+      value: data.motorcycles || 0,
+      cls: "stat-card-motos",
+      icon: "bi-bicycle"
+    },
+    {
+      label: "Buses",
+      value: data.buses || 0,
+      cls: "stat-card-buses",
+      icon: "bi-bus-front"
+    },
+    {
+      label: "Trucks",
+      value: data.trucks || 0,
+      cls: "stat-card-trucks",
+      icon: "bi-truck"
+    },
+    {
+      label: "Pedestrians",
+      value: data.pedestrians || 0,
+      cls: "stat-card-peds",
+      icon: "bi-person-walking"
+    },
+    {
+      label: "Traffic Density",
+      value: data.traffic_density || "N/A",
+      cls: densityClass,
+      icon: "bi-speedometer"
+    },
   ];
 
   const container = document.getElementById("summaryCards");
+
   container.innerHTML = cards.map(c => `
     <div class="col-6 col-md-4 col-lg-3 col-xl-auto flex-fill">
       <div class="stat-card ${c.cls} position-relative shadow-sm">
@@ -288,6 +332,11 @@ function renderDetailsPanel(data) {
             <td><span class="badge badge-density-${(data.traffic_density||"low").toLowerCase()}">${data.traffic_density||"N/A"}</span></td></tr>
         <tr><td class="text-muted">Bicycles</td><td>${data.bicycles || 0}</td></tr>
         <tr><td class="text-muted">Traffic Lights</td><td>${data.traffic_lights || 0}</td></tr>
+        <tr><td class="text-muted">Vehicles Crossing Line</td><td><strong>${data.crossed_vehicles || 0}</strong></td></tr>
+        <tr><td class="text-muted">Cars Crossing</td><td>${data.crossed_cars || 0}</td></tr>
+        <tr><td class="text-muted">Motorcycles Crossing</td><td>${data.crossed_motorcycles || 0}</td></tr>
+        <tr><td class="text-muted">Buses Crossing</td><td>${data.crossed_buses || 0}</td></tr>
+        <tr><td class="text-muted">Trucks Crossing</td><td>${data.crossed_trucks || 0}</td></tr>
       </tbody>
     </table>
   `;
