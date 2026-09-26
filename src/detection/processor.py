@@ -374,6 +374,7 @@ def process_video(
     # ByteTrack's original IDs are still kept internally.
     display_id_map = {}
     next_display_id = 1
+    previous_centers = {}
 
     # -----------------------------------------------------------------------
     # Processing variables
@@ -406,6 +407,23 @@ def process_video(
             frame = result.orig_img.copy()
 
             frame_idx += 1
+            # ---------------------------------------------------------------
+            # Virtual counting line
+            # ---------------------------------------------------------------
+
+            frame_height, frame_width = frame.shape[:2]
+
+            counting_line_y = int(
+                frame_height * config.COUNTING_LINE_POSITION
+            )
+
+            cv2.line(
+                frame,
+                (0, counting_line_y),
+                (frame_width, counting_line_y),
+                (0, 255, 255),
+                2,
+            )
 
             # ---------------------------------------------------------------
             # Running FPS
@@ -490,23 +508,66 @@ def process_video(
                     # Class name
                     # -------------------------------------------------------
 
+                    # Class name
+                    # -------------------------------------------------------
+
+                    # Use the most frequently observed class for this track.
+                    # This reduces BUS/TRUCK switching caused by individual
+                    # frame-level YOLO predictions.
+
+                    stable_class_id = counter.get_stable_class(track_id)
+
+                    if stable_class_id is None:
+                        stable_class_id = class_id
+
                     class_name = config.CLASS_NAMES.get(
-                        class_id,
-                        f"CLASS_{class_id}",
+                        stable_class_id,
+                        f"CLASS_{stable_class_id}",
                     )
+
+                    # Clean sequential IDs for display only.
+                    # ByteTrack's original IDs are still kept internally.
                     if track_id not in display_id_map:
-                      display_id_map[track_id] = next_display_id
-                      next_display_id += 1
+                        display_id_map[track_id] = next_display_id
+                        next_display_id += 1
 
                     display_id = display_id_map[track_id]
-
                     # -------------------------------------------------------
-                    # Count unique objects
+                    # Register unique detected object
                     # -------------------------------------------------------
 
                     counter.update(
                         track_id,
                         class_id,
+                    )
+                   # -------------------------------------------------------
+                    # Virtual counting-line detection
+                    # -------------------------------------------------------
+
+                    center_x = int((x1 + x2) / 2)
+                    center_y = int((y1 + y2) / 2)
+
+                    previous_center = previous_centers.get(track_id)
+
+                    if previous_center is not None:
+
+                        previous_y = previous_center[1]
+
+                        # Detect crossing in either direction.
+                        crossed_line = (
+                            (previous_y < counting_line_y <= center_y)
+                            or
+                            (previous_y > counting_line_y >= center_y)
+                        )
+
+                        if crossed_line:
+
+                            counter.register_crossing(track_id)
+
+                    # Save current position for the next frame.
+                    previous_centers[track_id] = (
+                        center_x,
+                        center_y,
                     )
 
                     # -------------------------------------------------------
@@ -591,7 +652,11 @@ def process_video(
             # Statistics overlay
             # ---------------------------------------------------------------
 
+            # Unique objects detected throughout the video.
             counts = counter.get_counts()
+
+            # Vehicles that have crossed the virtual counting line.
+            crossing_counts = counter.get_crossing_counts()
 
             _draw_overlay(
                 frame,
@@ -713,6 +778,7 @@ def process_video(
     # -----------------------------------------------------------------------
 
     final_counts = counter.get_counts()
+    final_crossing_counts = counter.get_crossing_counts()
 
     overall_density = (
         density_tracker
@@ -747,6 +813,7 @@ def process_video(
         total_frames=frame_idx,
         duration_sec=duration_sec,
         processing_time=processing_time,
+        crossing_counts=final_crossing_counts,
         output_video=output_video_path,
         csv_report=csv_report_path,
         status="completed",
@@ -758,6 +825,7 @@ def process_video(
 
     return {
         "counts": final_counts,
+        "crossing_counts": final_crossing_counts,
         "density": overall_density,
         "fps": src_fps,
         "total_frames": frame_idx,
