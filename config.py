@@ -87,6 +87,8 @@ STATS_SAMPLE_EVERY_N_FRAMES = 10
 # ---------------------------------------------------------------------------
 # Flask
 # ---------------------------------------------------------------------------
+# Virtual counting line
+COUNTING_LINE_POSITION = 0.60
 SECRET_KEY = "road-safety-dev-key-change-in-production"
 DEBUG = True
 HOST = "0.0.0.0"

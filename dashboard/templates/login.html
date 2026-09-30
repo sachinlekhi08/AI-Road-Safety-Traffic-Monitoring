@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In | TrafficVision AI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before,
+        .login-page::after {
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        .login-page::before {
+            background: #6d5dfc;
+            top: -180px;
+            left: -150px;
+        }
+
+        .login-page::after {
+            background: #3b82f6;
+            bottom: -200px;
+            right: -150px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 2;
+            animation: loginFadeIn 0.7s ease;
+        }
+
+        @keyframes loginFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-brand-icon {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto 14px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: linear-gradient(135deg, #6d5dfc, #3b82f6);
+            box-shadow: 0 12px 35px rgba(109, 93, 252, 0.35);
+        }
+
+        .login-brand h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #e8f0f8;
+        }
+
+        .login-brand p {
+            color: #8fa3b8;
+            margin: 0;
+        }
+
+        .login-card {
+            background: rgba(13, 27, 45, 0.88);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(18px);
+        }
+
+        .login-home-link {
+            margin-bottom: 22px;
+        }
+
+        .login-home-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #8fa3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .login-home-link a:hover {
+            color: #ffffff;
+            transform: translateX(-2px);
+        }
+
+        .access-label {
+            color: #8fa3b8;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+        }
+
+        .access-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .access-option {
+            position: relative;
+        }
+
+        .access-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .access-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+            padding: 10px 14px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 12px;
+            color: #9fb0c2;
+            background: rgba(255, 255, 255, 0.025);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 600;
+        }
+
+        .access-option label:hover {
+            border-color: rgba(109, 93, 252, 0.55);
+            color: #e8f0f8;
+            transform: translateY(-1px);
+        }
+
+        .access-option input:checked + label {
+            background: rgba(109, 93, 252, 0.14);
+            border-color: #6d5dfc;
+            color: #ffffff;
+            box-shadow: 0 8px 24px rgba(109, 93, 252, 0.12);
+        }
+
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: #e8f0f8;
+            border-radius: 12px;
+            padding: 12px 14px;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .login-input::placeholder {
+            color: #64748b;
+        }
+
+        .login-input:focus {
+            border-color: #6d5dfc;
+            box-shadow: 0 0 0 3px rgba(109, 93, 252, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper .login-input {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+
+            color: #8497aa;
+            cursor: pointer;
+
+            transition:
+                color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #ffffff;
+            background: rgba(109, 93, 252, 0.12);
+        }
+
+        .password-toggle:focus {
+            outline: none;
+            color: #9b91ff;
+        }
+
+        .password-toggle i {
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 13px 18px;
+            margin-top: 8px;
+            color: #ffffff;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6d5dfc, #3b82f6);
+            box-shadow: 0 12px 28px rgba(109, 93, 252, 0.25);
+            transition: all 0.25s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(109, 93, 252, 0.35);
+        }
+
+        .login-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            color: #fecaca;
+            background: rgba(127, 29, 29, 0.28);
+            border: 1px solid rgba(248, 113, 113, 0.35);
+            font-size: 14px;
+        }
+
+        .login-register-link {
+            margin-top: 20px;
+            padding-top: 17px;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+            text-align: center;
+            color: #8497aa;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .login-register-link a {
+            color: #8b7cff;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .login-register-link a:hover {
+            color: #a79cff;
+            text-decoration: underline;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: #9b91ff;
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            color: #ffffff;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 22px;
+                border-radius: 20px;
+            }
+
+            .access-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-wrapper">
+
+        <div class="login-brand">
+
+            <div class="login-brand-icon">
+                🚦
+            </div>
+
+            <h1>TrafficVision AI</h1>
+
+            <p>
+                AI-Powered Traffic Intelligence
+            </p>
+
+        </div>
+
+
+        <div class="login-card">
+
+            <div class="login-home-link">
+
+                <a href="{{ url_for('index') }}">
+                    <span>←</span>
+                    Back to Home
+                </a>
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <h2 class="text-white fw-bold mb-1">
+                    Welcome back
+                </h2>
+
+                <p class="mb-0" style="color:#8fa3b8;">
+                    Sign in to access your traffic monitoring system.
+                </p>
+
+            </div>
+
+
+            {% if error %}
+
+            <div class="login-error">
+
+                <span>⚠️</span>
+
+                <div>
+                    {{ error }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <form method="POST" action="{{ url_for('login') }}">
+
+                <div class="access-label">
+                    Access Type
+                </div>
+
+                <div class="access-options">
+
+                    <div class="access-option">
+
+                        <input
+                            type="radio"
+                            id="userMode"
+                            name="login_mode"
+                            value="user"
+                            checked
+                        >
+
+                        <label for="userMode">
+                            👤 User Access
+                        </label>
+
+                    </div>
+
+
+                    <div class="access-option">
+
+                        <input
+                            type="radio"
+                            id="adminMode"
+                            name="login_mode"
+                            value="admin"
+                        >
+
+                        <label for="adminMode">
+                            🛡️ Admin Access
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label
+                        for="username"
+                        class="form-label"
+                    >
+                        Username or Email
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        class="login-input"
+                        placeholder="Enter username or email"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label
+                        for="password"
+                        class="form-label"
+                    >
+                        Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="login-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="togglePassword('password', this)"
+                            aria-label="Show password"
+                            title="Show password"
+                        >
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+                    Sign In →
+                </button>
+
+            </form>
+
+
+            <div class="login-register-link">
+
+                Don't have an account?
+
+                <a href="{{ url_for('register') }}">
+                    Sign Up
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="login-footer">
+            AI-Based Road Safety & Traffic Monitoring System
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+function togglePassword(inputId, button) {
+
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector("i");
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        icon.classList.remove("bi-eye-fill");
+        icon.classList.add("bi-eye-slash-fill");
+
+        button.setAttribute("aria-label", "Hide password");
+        button.setAttribute("title", "Hide password");
+
+    } else {
+
+        input.type = "password";
+
+        icon.classList.remove("bi-eye-slash-fill");
+        icon.classList.add("bi-eye-fill");
+
+        button.setAttribute("aria-label", "Show password");
+        button.setAttribute("title", "Show password");
+
+    }
+}
+</script>
+
+</body>
+</html>

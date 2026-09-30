@@ -210,6 +210,7 @@ def process_video(
     roi_config: dict | None = None,
     progress_callback=None,
     conf_threshold: float | None = None,
+    user_id: int | None = None,
 ) -> dict:
     """
     Run the full detection → tracking → analytics → output pipeline.
@@ -807,6 +808,7 @@ def process_video(
         video_filename=os.path.basename(
             video_path
         ),
+        user_id=user_id,
         counts=final_counts,
         density=overall_density,
         fps=src_fps,

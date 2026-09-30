@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Admin Control Center | RoadVision AI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="{{ url_for('static', filename='css/style.css') }}"
+        rel="stylesheet"
+    >
+
+    <style>
+        /* =========================================
+           ADMIN PAGE
+        ========================================= */
+
+        .admin-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(109, 93, 252, 0.10),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(59, 130, 246, 0.08),
+                    transparent 30%
+                ),
+                var(--bg);
+        }
+
+        /* =========================================
+           ADMIN TOPBAR
+        ========================================= */
+
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7, 17, 31, 0.88);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            backdrop-filter: blur(18px);
+        }
+
+        .admin-brand {
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .admin-brand:hover {
+            color: var(--text);
+        }
+
+        .admin-brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(
+                135deg,
+                #6d5dfc,
+                #3b82f6
+            );
+            box-shadow:
+                0 8px 25px rgba(109, 93, 252, 0.25);
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .admin-user i {
+            color: var(--brand-strong);
+            font-size: 19px;
+        }
+
+        /* =========================================
+           PAGE HEADER
+        ========================================= */
+
+        .admin-content {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .admin-hero {
+            padding: 30px 0 24px;
+        }
+
+        .admin-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #9b91ff;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+            margin-bottom: 9px;
+        }
+
+        .admin-title {
+            color: var(--text);
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+        }
+
+        .admin-description {
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 0;
+        }
+
+        .admin-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            color: #c4b5fd;
+            background: rgba(109, 93, 252, 0.10);
+            border: 1px solid rgba(109, 93, 252, 0.22);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.55;
+                transform: scale(0.75);
+            }
+        }
+
+        /* =========================================
+           ALERT
+        ========================================= */
+
+        .admin-alert {
+            background: rgba(127, 29, 29, 0.22);
+            border: 1px solid rgba(248, 113, 113, 0.30);
+            color: #fecaca;
+            border-radius: 14px;
+        }
+
+        .admin-alert .btn-close {
+            filter: invert(1);
+        }
+
+        /* =========================================
+           STAT CARDS
+        ========================================= */
+
+        .admin-stat {
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(16, 31, 51, 0.96),
+                    rgba(13, 27, 45, 0.96)
+                );
+            border: 1px solid rgba(148, 163, 184, 0.13);
+            border-radius: 20px;
+            padding: 21px;
+            transition:
+                transform 0.28s ease,
+                border-color 0.28s ease,
+                box-shadow 0.28s ease;
+            animation: adminCardIn 0.65s ease both;
+        }
+
+        .admin-stat:hover {
+            transform: translateY(-5px);
+            border-color: rgba(109, 93, 252, 0.35);
+            box-shadow:
+                0 18px 45px rgba(0, 0, 0, 0.25),
+                0 0 30px rgba(109, 93, 252, 0.08);
+        }
+
+        .admin-stat::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            right: -55px;
+            top: -55px;
+            background: rgba(109, 93, 252, 0.07);
+        }
+
+        @keyframes adminCardIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-stat:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .admin-stat:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+
+        .admin-stat:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .admin-stat:nth-child(4) {
+            animation-delay: 0.20s;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .stat-number {
+            color: var(--text);
+            font-size: 31px;
+            font-weight: 800;
+            line-height: 1;
+            margin-top: 8px;
+        }
+
+        .stat-subtitle {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-purple {
+            color: #c4b5fd;
+            background: rgba(109, 93, 252, 0.14);
+        }
+
+        .stat-blue {
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.14);
+        }
+
+        .stat-orange {
+            color: #fdba74;
+            background: rgba(249, 115, 22, 0.14);
+        }
+
+        .stat-green {
+            color: #86efac;
+            background: rgba(34, 197, 94, 0.14);
+        }
+
+        /* =========================================
+           SECTION CARDS
+        ========================================= */
+
+        .admin-section {
+            background: rgba(13, 27, 45, 0.82);
+            border: 1px solid rgba(148, 163, 184, 0.13);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.16);
+            animation: adminSectionIn 0.7s ease both;
+        }
+
+        @keyframes adminSectionIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .section-title {
+            color: var(--text);
+            font-size: 17px;
+            font-weight: 750;
+            margin: 0;
+        }
+
+        .section-description {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin: 4px 0 0;
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b8afff;
+            background: rgba(109, 93, 252, 0.12);
+        }
+
+        /* =========================================
+           TABLES
+        ========================================= */
+
+        .admin-table {
+            margin: 0;
+            color: var(--text);
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--text);
+            --bs-table-hover-bg: rgba(109, 93, 252, 0.045);
+            --bs-table-hover-color: var(--text);
+        }
+
+        .admin-table thead th {
+            color: #71849a;
+            background: rgba(255, 255, 255, 0.018);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+            border-top: none;
+            padding: 13px 18px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .admin-table tbody td {
+            border-color: rgba(148, 163, 184, 0.08);
+            padding: 15px 18px;
+            vertical-align: middle;
+            color: #b7c5d5;
+        }
+
+        .admin-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            background: rgba(109, 93, 252, 0.045);
+        }
+
+        .table-primary-text {
+            color: var(--text);
+            font-weight: 650;
+        }
+
+        .table-secondary-text {
+            color: #71849a;
+            font-size: 12px;
+        }
+
+        /* =========================================
+           BADGES
+        ========================================= */
+
+        .role-badge,
+        .status-badge,
+        .density-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 999px;
+            padding: 6px 9px;
+            font-size: 11px;
+            font-weight: 750;
+            border: 1px solid transparent;
+        }
+
+        .role-admin {
+            color: #fcd34d;
+            background: rgba(245, 158, 11, 0.10);
+            border-color: rgba(245, 158, 11, 0.20);
+        }
+
+        .role-user {
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.10);
+            border-color: rgba(99, 102, 241, 0.20);
+        }
+
+        .status-completed {
+            color: #86efac;
+            background: rgba(34, 197, 94, 0.10);
+            border-color: rgba(34, 197, 94, 0.18);
+        }
+
+        .status-failed {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.10);
+            border-color: rgba(239, 68, 68, 0.18);
+        }
+
+        .status-other {
+            color: #cbd5e1;
+            background: rgba(148, 163, 184, 0.08);
+            border-color: rgba(148, 163, 184, 0.14);
+        }
+
+        .density-high {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.10);
+            border-color: rgba(239, 68, 68, 0.18);
+        }
+
+        .density-medium {
+            color: #fcd34d;
+            background: rgba(245, 158, 11, 0.10);
+            border-color: rgba(245, 158, 11, 0.18);
+        }
+
+        .density-low {
+            color: #86efac;
+            background: rgba(34, 197, 94, 0.10);
+            border-color: rgba(34, 197, 94, 0.18);
+        }
+
+        /* =========================================
+           FORM CONTROLS
+        ========================================= */
+
+        .admin-select {
+            min-width: 105px;
+            background-color: #101f33 !important;
+            color: #dbe7f3 !important;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 9px;
+        }
+
+        .admin-select:focus {
+            border-color: #6d5dfc;
+            box-shadow: 0 0 0 3px rgba(109, 93, 252, 0.10);
+        }
+
+        .admin-select option {
+            background: #101f33;
+            color: #ffffff;
+        }
+
+        .btn-admin-save {
+            color: #c4b5fd;
+            border: 1px solid rgba(109, 93, 252, 0.30);
+            background: rgba(109, 93, 252, 0.08);
+            border-radius: 9px;
+            font-weight: 650;
+        }
+
+        .btn-admin-save:hover {
+            color: white;
+            background: rgba(109, 93, 252, 0.18);
+            border-color: rgba(109, 93, 252, 0.55);
+        }
+
+        .btn-admin-delete {
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.22);
+            background: rgba(239, 68, 68, 0.06);
+            border-radius: 9px;
+            font-weight: 650;
+        }
+
+        .btn-admin-delete:hover {
+            color: white;
+            background: rgba(239, 68, 68, 0.16);
+            border-color: rgba(239, 68, 68, 0.45);
+        }
+
+        /* =========================================
+           TRAFFIC SYSTEM VISUAL
+        ========================================= */
+
+        .traffic-monitor {
+            position: relative;
+            min-height: 130px;
+            overflow: hidden;
+            border-radius: 17px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.10);
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(18, 35, 57, 0.95),
+                    rgba(7, 17, 31, 0.98)
+                );
+        }
+
+        .traffic-road {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 54px;
+            background: rgba(0, 0, 0, 0.24);
+            border-top: 1px solid rgba(148, 163, 184, 0.08);
+        }
+
+        .traffic-road::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 25px;
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255,255,255,0.30) 0 34px,
+                transparent 34px 65px
+            );
+        }
+
+        .traffic-car {
+            position: absolute;
+            bottom: 19px;
+            font-size: 20px;
+            animation: trafficMove 9s linear infinite;
+        }
+
+        .traffic-car.one {
+            animation-delay: 0s;
+        }
+
+        .traffic-car.two {
+            animation-delay: 3s;
+            font-size: 18px;
+        }
+
+        .traffic-car.three {
+            animation-delay: 6s;
+            font-size: 17px;
+        }
+
+        @keyframes trafficMove {
+            from {
+                left: -50px;
+            }
+
+            to {
+                left: calc(100% + 50px);
+            }
+        }
+
+        .monitor-label {
+            position: absolute;
+            top: 17px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8fa3b8;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .monitor-live {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
+
+        .admin-empty {
+            text-align: center;
+            padding: 38px 20px;
+            color: #64748b;
+        }
+
+        .admin-empty i {
+            display: block;
+            font-size: 30px;
+            margin-bottom: 10px;
+            opacity: 0.55;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 767px) {
+
+            .admin-topbar .container-fluid {
+                padding: 11px 15px !important;
+            }
+
+            .admin-user {
+                display: none;
+            }
+
+            .admin-brand span {
+                display: none;
+            }
+
+            .admin-hero {
+                padding-top: 22px;
+            }
+
+            .admin-status {
+                margin-top: 15px;
+            }
+
+            .stat-number {
+                font-size: 27px;
+            }
+
+            .admin-section {
+                border-radius: 16px;
+            }
+
+            .section-header {
+                padding: 17px;
+            }
+
+            .admin-table thead th,
+            .admin-table tbody td {
+                padding: 12px 14px;
+            }
+
+            .traffic-monitor {
+                min-height: 110px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .admin-stat,
+            .admin-section,
+            .traffic-car,
+            .admin-status-dot {
+                animation: none !important;
+            }
+
+            .admin-stat {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="admin-page">
+
+    <!-- =========================================
+         TOP NAVIGATION
+    ========================================== -->
+
+    <nav class="admin-topbar">
+        <div class="container-fluid px-4 py-2">
+
+            <div class="d-flex align-items-center justify-content-between">
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="admin-brand"
+                >
+                    <span class="admin-brand-icon">
+                        <i class="bi bi-camera-video-fill"></i>
+                    </span>
+
+                    <span>
+                        RoadVision AI
+                    </span>
+                </a>
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="admin-user">
+                        <i class="bi bi-person-circle"></i>
+                        <span>{{ session.username }}</span>
+                    </div>
+
+                    <a
+                        href="{{ url_for('index') }}"
+                        class="btn btn-sm btn-outline-light"
+                    >
+                        <i class="bi bi-house me-1"></i>
+                        Home
+                    </a>
+
+                    <a
+                        href="{{ url_for('logout') }}"
+                        class="btn btn-sm btn-outline-danger"
+                    >
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        Logout
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="container-fluid px-3 px-md-4">
+
+        <div class="admin-content">
+
+            <!-- HEADER -->
+
+            <section class="admin-hero">
+
+                <div class="row align-items-end g-3">
+
+                    <div class="col-lg-8">
+
+                        <div class="admin-eyebrow">
+                            <i class="bi bi-shield-check"></i>
+                            System Administration
+                        </div>
+
+                        <h1 class="admin-title">
+                            Control Center
+                        </h1>
+
+                        <p class="admin-description">
+                            Monitor traffic intelligence, manage system users,
+                            and review computer-vision analysis activity.
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-4 text-lg-end">
+
+                        <span class="admin-status">
+                            <span class="admin-status-dot"></span>
+                            System Online
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+            <div
+                class="alert admin-alert alert-dismissible fade show mb-4"
+                role="alert"
+            >
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                {{ error }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =====================================
+                 TRAFFIC MONITOR VISUAL
+            ====================================== -->
+
+            <div class="traffic-monitor">
+
+                <div class="monitor-label">
+                    <span class="monitor-live"></span>
+                    Live Traffic Intelligence
+                </div>
+
+                <div class="traffic-road"></div>
+
+                <div class="traffic-car one">
+                    🚗
+                </div>
+
+                <div class="traffic-car two">
+                    🚌
+                </div>
+
+                <div class="traffic-car three">
+                    🚙
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 STATISTICS
+            ====================================== -->
+
+            <div class="row g-3 g-xl-4 mb-4">
+
+                <!-- USERS -->
+
+                <div class="col-6 col-xl-3">
+
+                    <div class="admin-stat">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="stat-label">
+                                    Registered Users
+                                </div>
+
+                                <div class="stat-number">
+                                    {{ total_users }}
+                                </div>
+
+                                <div class="stat-subtitle">
+                                    System accounts
+                                </div>
+                            </div>
+
+                            <div class="stat-icon stat-purple">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANALYSES -->
+
+                <div class="col-6 col-xl-3">
+
+                    <div class="admin-stat">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="stat-label">
+                                    Total Analyses
+                                </div>
+
+                                <div class="stat-number">
+                                    {{ total_analyses }}
+                                </div>
+
+                                <div class="stat-subtitle">
+                                    Video processing jobs
+                                </div>
+                            </div>
+
+                            <div class="stat-icon stat-blue">
+                                <i class="bi bi-bar-chart-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VEHICLES -->
+
+                <div class="col-6 col-xl-3">
+
+                    <div class="admin-stat">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="stat-label">
+                                    Vehicles Detected
+                                </div>
+
+                                <div class="stat-number">
+                                    {{ total_vehicles }}
+                                </div>
+
+                                <div class="stat-subtitle">
+                                    Across all analyses
+                                </div>
+                            </div>
+
+                            <div class="stat-icon stat-orange">
+                                <i class="bi bi-car-front-fill"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PEDESTRIANS -->
+
+                <div class="col-6 col-xl-3">
+
+                    <div class="admin-stat">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+                                <div class="stat-label">
+                                    Pedestrians
+                                </div>
+
+                                <div class="stat-number">
+                                    {{ total_pedestrians }}
+                                </div>
+
+                                <div class="stat-subtitle">
+                                    Detected by vision system
+                                </div>
+                            </div>
+
+                            <div class="stat-icon stat-green">
+                                <i class="bi bi-person-walking"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 USER MANAGEMENT
+            ====================================== -->
+
+            <section class="admin-section mb-4">
+
+                <div class="section-header">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="section-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="section-title">
+                                User Management
+                            </h2>
+
+                            <p class="section-description">
+                                Manage registered accounts and access roles.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table admin-table align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Access</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for u in users %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <i class="bi bi-person-circle fs-5 text-secondary"></i>
+
+                                        <div>
+                                            <div class="table-primary-text">
+                                                {{ u.username }}
+                                            </div>
+
+                                            <div class="table-secondary-text">
+                                                ID #{{ u.id }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    {{ u.email }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if u.role == "admin" %}
+
+                                        <span class="role-badge role-admin">
+                                            <i class="bi bi-shield-fill"></i>
+                                            Admin
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="role-badge role-user">
+                                            <i class="bi bi-person-fill"></i>
+                                            User
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td class="table-secondary-text">
+                                    {{ u.created_at }}
+                                </td>
+
+
+                                <td>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('admin_update_user_role', user_id=u.id) }}"
+                                        class="d-flex gap-2"
+                                    >
+
+                                        <select
+                                            name="role"
+                                            class="form-select form-select-sm admin-select"
+                                        >
+
+                                            <option
+                                                value="user"
+                                                {% if u.role == "user" %}selected{% endif %}
+                                            >
+                                                User
+                                            </option>
+
+                                            <option
+                                                value="admin"
+                                                {% if u.role == "admin" %}selected{% endif %}
+                                            >
+                                                Admin
+                                            </option>
+
+                                        </select>
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-admin-save"
+                                        >
+                                            Save
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+
+                                <td>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('admin_delete_user', user_id=u.id) }}"
+                                        onsubmit="return confirm('Delete user {{ u.username }}? This cannot be undone.');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-admin-delete"
+                                            {% if u.id == session.get('user_id') %}
+                                            disabled
+                                            {% endif %}
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="6">
+                                    <div class="admin-empty">
+                                        <i class="bi bi-people"></i>
+                                        No users found.
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+                 ANALYSIS MANAGEMENT
+            ====================================== -->
+
+            <section class="admin-section mb-5">
+
+                <div class="section-header">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="section-icon">
+                            <i class="bi bi-activity"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="section-title">
+                                Analysis Management
+                            </h2>
+
+                            <p class="section-description">
+                                Review traffic-monitoring jobs and system outputs.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table admin-table align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>Video</th>
+                                <th>Owner</th>
+                                <th>Vehicles</th>
+                                <th>Pedestrians</th>
+                                <th>Density</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for a in analyses %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <i class="bi bi-camera-video text-secondary"></i>
+
+                                        <div>
+                                            <div class="table-primary-text">
+                                                {{ a.video_filename }}
+                                            </div>
+
+                                            <div class="table-secondary-text">
+                                                {{ a.analysis_id[:8] }}...
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="table-primary-text">
+                                        <i class="bi bi-person-circle me-1"></i>
+                                        {{ a.owner }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <strong>{{ a.total_vehicles }}</strong>
+                                </td>
+
+
+                                <td>
+                                    {{ a.pedestrians }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if a.traffic_density == "HIGH" %}
+
+                                        <span class="density-badge density-high">
+                                            <i class="bi bi-circle-fill"></i>
+                                            HIGH
+                                        </span>
+
+                                    {% elif a.traffic_density == "MEDIUM" %}
+
+                                        <span class="density-badge density-medium">
+                                            <i class="bi bi-circle-fill"></i>
+                                            MEDIUM
+                                        </span>
+
+                                    {% elif a.traffic_density == "LOW" %}
+
+                                        <span class="density-badge density-low">
+                                            <i class="bi bi-circle-fill"></i>
+                                            LOW
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="density-badge status-other">
+                                            {{ a.traffic_density }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if a.status == "completed" %}
+
+                                        <span class="status-badge status-completed">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Completed
+                                        </span>
+
+                                    {% elif a.status == "failed" %}
+
+                                        <span class="status-badge status-failed">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            Failed
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status-badge status-other">
+                                            {{ a.status }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td class="table-secondary-text">
+                                    {{ a.created_at }}
+                                </td>
+
+
+                                <td>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('admin_delete_analysis', analysis_id=a.analysis_id) }}"
+                                        onsubmit="return confirm('Delete this analysis and generated files?');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-admin-delete"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="8">
+
+                                    <div class="admin-empty">
+                                        <i class="bi bi-bar-chart"></i>
+                                        No analyses found.
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

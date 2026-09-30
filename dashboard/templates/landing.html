@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TrafficVision AI | AI-Powered Traffic Intelligence</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <link
+        href="{{ url_for('static', filename='css/style.css') }}"
+        rel="stylesheet">
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark tv-navbar">
+    <div class="container">
+
+        <a class="navbar-brand tv-brand"
+           href="{{ url_for('index') }}">
+
+            <span class="tv-logo">
+                <i class="bi bi-eye-fill"></i>
+            </span>
+
+            <span class="tv-brand-text">
+
+                <span class="tv-brand-name">
+                    TrafficVision AI
+                </span>
+
+                <span class="tv-brand-tagline">
+                    AI-Powered Traffic Intelligence
+                </span>
+
+            </span>
+
+        </a>
+
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+
+            <a href="{{ url_for('login') }}"
+               class="btn tv-nav-btn tv-signin-btn">
+
+                <i class="bi bi-box-arrow-in-right me-1"></i>
+                Sign In
+
+            </a>
+
+
+        <a href="{{ url_for('register') }}" class="btn tv-nav-btn tv-admin-btn">
+            <i class="bi bi-person-plus me-1"></i>
+            Register
+        </a>
+
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+
+<section class="tv-hero">
+
+    <div class="tv-grid-background"></div>
+
+    <div class="container tv-hero-container">
+
+        <div class="row align-items-center g-5">
+
+            <!-- LEFT -->
+
+            <div class="col-lg-6">
+
+                <div class="tv-status-badge">
+
+                    <span class="tv-status-dot"></span>
+
+                    COMPUTER VISION SYSTEM ONLINE
+
+                </div>
+
+
+                <h1 class="tv-hero-title">
+
+                    Intelligent Traffic
+
+                    <span>
+                        Monitoring
+                    </span>
+
+                </h1>
+
+
+                <p class="tv-hero-description">
+
+                    TrafficVision AI uses computer vision to
+                    detect, track and analyse vehicles and
+                    pedestrians in traffic scenes.
+
+                </p>
+
+
+                <div class="tv-hero-actions">
+
+                    <a href="{{ url_for('login') }}"
+                       class="tv-primary-btn">
+
+                        <i class="bi bi-play-fill"></i>
+
+                        Start Monitoring
+
+                    </a>
+
+
+                    <a href="#features"
+                       class="tv-secondary-btn">
+
+                        <i class="bi bi-cpu"></i>
+
+                        Explore System
+
+                    </a>
+
+                </div>
+
+
+                <div class="tv-capabilities">
+
+                    <div class="tv-capability">
+
+                        <i class="bi bi-eye"></i>
+
+                        <span>Detect</span>
+
+                    </div>
+
+
+                    <div class="tv-capability">
+
+                        <i class="bi bi-bullseye"></i>
+
+                        <span>Track</span>
+
+                    </div>
+
+
+                    <div class="tv-capability">
+
+                        <i class="bi bi-bar-chart"></i>
+
+                        <span>Analyse</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT - COMPUTER VISION MONITOR -->
+
+            <div class="col-lg-6">
+
+                <div class="tv-monitor">
+
+
+                    <!-- Monitor Header -->
+
+                    <div class="tv-monitor-header">
+
+                        <div class="tv-monitor-title">
+
+                            <span class="tv-live-dot"></span>
+
+                            LIVE TRAFFIC ANALYSIS
+
+                        </div>
+
+
+                        <div class="tv-monitor-time">
+
+                            <i class="bi bi-record-circle"></i>
+
+                            AI MONITOR
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Road Scene -->
+
+                    <div class="tv-road-scene">
+
+                        <!-- Scanner -->
+
+                        <div class="tv-scan-line"></div>
+
+
+                        <!-- Road -->
+
+                        <div class="tv-road"></div>
+
+
+                        <!-- Lane markings -->
+
+                        <div class="tv-lane lane-one"></div>
+
+                        <div class="tv-lane lane-two"></div>
+
+
+                        <!-- Car 1 -->
+
+                        <div class="tv-vehicle tv-car car-one">
+
+                            <div class="tv-detection-box">
+
+                                <span class="tv-object-label">
+                                    CAR #012
+                                </span>
+
+                                <i class="bi bi-car-front-fill"></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Car 2 -->
+
+                        <div class="tv-vehicle tv-car car-two">
+
+                            <div class="tv-detection-box">
+
+                                <span class="tv-object-label">
+                                    CAR #013
+                                </span>
+
+                                <i class="bi bi-car-front-fill"></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Bus -->
+
+                        <div class="tv-vehicle tv-bus bus-one">
+
+                            <div class="tv-detection-box">
+
+                                <span class="tv-object-label">
+                                    BUS #014
+                                </span>
+
+                                <i class="bi bi-bus-front-fill"></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Pedestrian -->
+
+                        <div class="tv-person person-one">
+
+                            <div class="tv-person-box">
+
+                                <span class="tv-object-label">
+                                    PERSON #021
+                                </span>
+
+                                <i class="bi bi-person-fill"></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Detection Points -->
+
+                        <span class="tv-detection-point point-one"></span>
+
+                        <span class="tv-detection-point point-two"></span>
+
+                        <span class="tv-detection-point point-three"></span>
+
+
+                        <!-- Counting Line -->
+
+                        <div class="tv-counting-line">
+
+                            <span>
+                                TRAFFIC COUNTING LINE
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Statistics -->
+
+                    <div class="tv-monitor-stats">
+
+
+                        <div class="tv-monitor-stat">
+
+                            <span class="tv-stat-label">
+                                VEHICLES
+                            </span>
+
+                            <strong>
+                                24
+                            </strong>
+
+                        </div>
+
+
+                        <div class="tv-monitor-stat">
+
+                            <span class="tv-stat-label">
+                                PEDESTRIANS
+                            </span>
+
+                            <strong>
+                                08
+                            </strong>
+
+                        </div>
+
+
+                        <div class="tv-monitor-stat">
+
+                            <span class="tv-stat-label">
+                                TRACKING
+                            </span>
+
+                            <strong class="tv-green-text">
+                                ACTIVE
+                            </strong>
+
+                        </div>
+
+
+                        <div class="tv-monitor-stat">
+
+                            <span class="tv-stat-label">
+                                DENSITY
+                            </span>
+
+                            <strong>
+                                MEDIUM
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURES
+     ========================================================= -->
+
+<section id="features"
+         class="tv-features-section">
+
+    <div class="container">
+
+
+        <div class="tv-section-heading">
+
+            <span class="tv-section-label">
+                SYSTEM CAPABILITIES
+            </span>
+
+            <h2>
+                Computer Vision Intelligence
+            </h2>
+
+            <p>
+                TrafficVision AI transforms traffic video into
+                useful detection, tracking and analytical data.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- Vehicle -->
+
+            <div class="col-md-4">
+
+                <div class="tv-feature-card">
+
+                    <div class="tv-feature-icon vehicle-icon">
+
+                        <i class="bi bi-car-front-fill"></i>
+
+                    </div>
+
+
+                    <div class="tv-feature-number">
+                        01
+                    </div>
+
+
+                    <h4>
+                        Vehicle Detection
+                    </h4>
+
+
+                    <p>
+                        Detect cars, motorcycles, buses, trucks
+                        and bicycles using YOLO-based computer
+                        vision.
+                    </p>
+
+
+                    <div class="tv-feature-line"></div>
+
+
+                    <span class="tv-feature-tag">
+                        YOLO DETECTION
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Pedestrian -->
+
+            <div class="col-md-4">
+
+                <div class="tv-feature-card">
+
+                    <div class="tv-feature-icon pedestrian-icon">
+
+                        <i class="bi bi-person-walking"></i>
+
+                    </div>
+
+
+                    <div class="tv-feature-number">
+                        02
+                    </div>
+
+
+                    <h4>
+                        Object Tracking
+                    </h4>
+
+
+                    <p>
+                        Track detected vehicles and pedestrians
+                        across video frames using unique tracking
+                        identities.
+                    </p>
+
+
+                    <div class="tv-feature-line"></div>
+
+
+                    <span class="tv-feature-tag">
+                        BYTETRACK
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Analytics -->
+
+            <div class="col-md-4">
+
+                <div class="tv-feature-card">
+
+                    <div class="tv-feature-icon analytics-icon">
+
+                        <i class="bi bi-graph-up-arrow"></i>
+
+                    </div>
+
+
+                    <div class="tv-feature-number">
+                        03
+                    </div>
+
+
+                    <h4>
+                        Traffic Analytics
+                    </h4>
+
+
+                    <p>
+                        Analyse vehicle counts, pedestrian
+                        activity, traffic density and movement
+                        statistics.
+                    </p>
+
+
+                    <div class="tv-feature-line"></div>
+
+
+                    <span class="tv-feature-tag">
+                        TRAFFIC INTELLIGENCE
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     HOW IT WORKS
+     ========================================================= -->
+
+<section class="tv-workflow-section">
+
+    <div class="container">
+
+
+        <div class="tv-section-heading">
+
+            <span class="tv-section-label">
+                HOW IT WORKS
+            </span>
+
+            <h2>
+                From Video to Traffic Intelligence
+            </h2>
+
+            <p>
+                A computer vision pipeline converts traffic
+                footage into meaningful analytical results.
+            </p>
+
+        </div>
+
+
+        <div class="tv-workflow">
+
+
+            <div class="tv-workflow-item">
+
+                <div class="tv-workflow-icon">
+                    <i class="bi bi-camera-video-fill"></i>
+                </div>
+
+                <span>
+                    01
+                </span>
+
+                <h5>
+                    Traffic Video
+                </h5>
+
+                <p>
+                    Upload traffic footage
+                    for analysis.
+                </p>
+
+            </div>
+
+
+            <div class="tv-workflow-arrow">
+                <i class="bi bi-arrow-right"></i>
+            </div>
+
+
+            <div class="tv-workflow-item">
+
+                <div class="tv-workflow-icon">
+                    <i class="bi bi-eye-fill"></i>
+                </div>
+
+                <span>
+                    02
+                </span>
+
+                <h5>
+                    Detection
+                </h5>
+
+                <p>
+                    YOLO identifies
+                    traffic objects.
+                </p>
+
+            </div>
+
+
+            <div class="tv-workflow-arrow">
+                <i class="bi bi-arrow-right"></i>
+            </div>
+
+
+            <div class="tv-workflow-item">
+
+                <div class="tv-workflow-icon">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+
+                <span>
+                    03
+                </span>
+
+                <h5>
+                    Tracking
+                </h5>
+
+                <p>
+                    ByteTrack maintains
+                    object identities.
+                </p>
+
+            </div>
+
+
+            <div class="tv-workflow-arrow">
+                <i class="bi bi-arrow-right"></i>
+            </div>
+
+
+            <div class="tv-workflow-item">
+
+                <div class="tv-workflow-icon">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </div>
+
+                <span>
+                    04
+                </span>
+
+                <h5>
+                    Analytics
+                </h5>
+
+                <p>
+                    Generate traffic
+                    statistics.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CALL TO ACTION
+     ========================================================= -->
+
+<section class="tv-cta-section">
+
+    <div class="container">
+
+        <div class="tv-cta">
+
+            <div>
+
+                <span class="tv-section-label">
+                    READY TO ANALYSE TRAFFIC?
+                </span>
+
+                <h2>
+                    Start monitoring with
+                    TrafficVision AI.
+                </h2>
+
+                <p>
+                    Upload a traffic video and explore
+                    computer vision based traffic analysis.
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('login') }}"
+               class="tv-primary-btn">
+
+                <i class="bi bi-arrow-right-circle"></i>
+
+                Get Started
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="tv-footer">
+
+    <div class="container">
+
+        <div class="tv-footer-content">
+
+            <div class="tv-footer-brand">
+
+                <span class="tv-logo">
+
+                    <i class="bi bi-eye-fill"></i>
+
+                </span>
+
+                <div>
+
+                    <strong>
+                        TrafficVision AI
+                    </strong>
+
+                    <small>
+                        AI-Powered Traffic Intelligence
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="tv-footer-copy">
+
+                © 2026 TrafficVision AI
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+</body>
+</html>

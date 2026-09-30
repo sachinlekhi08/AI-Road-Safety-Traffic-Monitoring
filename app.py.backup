@@ -182,18 +182,14 @@ def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
-        login_mode = request.form.get("login_mode", "user")
-
-        # Only allow valid login modes
-        if login_mode not in ("user", "admin"):
-            login_mode = "user"
 
         if not username or not password:
             return render_template(
                 "login.html",
                 error="Please enter both username and password.",
             )
-
+        print("LOGIN DEBUG - username:", repr(username))
+        print("LOGIN DEBUG - password length:", len(password))
         user = authenticate_user(username, password)
 
         if user is None:
@@ -202,17 +198,8 @@ def login():
                 error="Invalid username or password.",
             )
 
-        # Admin access requires an actual admin role
-        if login_mode == "admin" and user["role"] != "admin":
-            return render_template(
-                "login.html",
-                error="This account does not have administrator access.",
-            )
-
-        # Create login session
         login_user(user)
 
-        # Redirect based on the actual database role
         if user["role"] == "admin":
             return redirect(url_for("admin_dashboard"))
 

@@ -125,8 +125,18 @@ async function uploadFile(file) {
   const formData = new FormData();
   formData.append("video", file);
 
-  try {
+    try {
     const resp = await fetch("/upload", { method: "POST", body: formData });
+
+    // Guest — Flask redirected this request to the login page.
+    if (
+      resp.redirected &&
+      new URL(resp.url, window.location.origin).pathname === "/login"
+    ) {
+      window.location.href = resp.url;
+      return;
+    }
+
     const data = await resp.json();
     if (resp.ok) {
       window._uploadedAnalysisId = data.analysis_id;
@@ -147,39 +157,66 @@ async function uploadFile(file) {
 // Start analysis
 // ---------------------------------------------------------------------------
 async function startAnalysis() {
+  const btnAnalyze = document.getElementById("btnAnalyze");
+
+  // Guard against double-clicks / repeated submits while a request is in flight.
+  if (btnAnalyze.disabled) return;
+
   let endpoint, body;
 
   if (window._builtinFilename) {
     // Built-in video
     endpoint = "/analyze_existing";
-    body     = JSON.stringify({ filename: window._builtinFilename });
+    body = JSON.stringify({
+      filename: window._builtinFilename
+    });
   } else if (window._uploadedAnalysisId) {
     // Uploaded video
     endpoint = `/analyze/${window._uploadedAnalysisId}`;
-    body     = JSON.stringify({});
+    body = JSON.stringify({});
   } else {
     showError("Please select or upload a video first.");
     return;
   }
 
+  btnAnalyze.disabled = true;
   showStatusBanner("Starting analysis…", 0);
   document.getElementById("summarySection").classList.add("d-none");
 
   try {
     const resp = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body,
     });
-    const data = await resp.json();
-    if (!resp.ok) {
-      showError(data.error || "Failed to start analysis");
+
+    // User is not logged in.
+    // Flask redirected the request to the login page.
+    if (
+      resp.redirected &&
+      new URL(resp.url, window.location.origin).pathname === "/login"
+    ) {
+      window.location.href = resp.url;
       return;
     }
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showError(data.error || "Failed to start analysis");
+      btnAnalyze.disabled = false;
+      return;
+    }
+
     currentAnalysisId = data.analysis_id;
     startPolling(currentAnalysisId);
+    // Left disabled on purpose — re-enabled in pollStatus() once the run finishes.
+
   } catch (e) {
     showError("Network error: " + e.message);
+    btnAnalyze.disabled = false;
   }
 }
 
@@ -203,11 +240,13 @@ async function pollStatus(id) {
 
     if (status === "completed") {
       clearInterval(pollingTimer);
+      document.getElementById("btnAnalyze").disabled = false;
       showStatusBanner("Analysis complete! Loading results…", 100);
       await loadResults(id);
       loadHistory();
     } else if (status === "failed") {
       clearInterval(pollingTimer);
+      document.getElementById("btnAnalyze").disabled = false;
       showError("Processing failed: " + (data.error || "unknown error").split("\n")[0]);
     }
   } catch (e) {
